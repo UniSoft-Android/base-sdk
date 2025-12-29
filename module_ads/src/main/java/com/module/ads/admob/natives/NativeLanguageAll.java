@@ -41,10 +41,10 @@ public class NativeLanguageAll {
         return nativeLanguage;
     }
 
-    private CallbackNative callbackNative;
+    private CallbackNative callback;
 
-    public void setCallbackNative(CallbackNative callbackNative) {
-        this.callbackNative = callbackNative;
+    public void setCallback(CallbackNative callback) {
+        this.callback = callback;
     }
 
     private void loadAndShow(final Activity activity, LinearLayout lnNative, String id, CallbackNative callbackNative, String namePlace) {
@@ -215,8 +215,8 @@ public class NativeLanguageAll {
                     public void onAdLoaded() {
                         super.onAdLoaded();
                         isLoadingNormal = false;
-                        if (callbackNative != null) {
-                            callbackNative.onLoaded();
+                        if (callback != null) {
+                            callback.onLoaded();
                         }
                     }
 
@@ -224,16 +224,16 @@ public class NativeLanguageAll {
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         Log.e("TAG", "onAdFailedToLoad: native language normal - " + loadAdError.getMessage());
                         isLoadingNormal = false;
-                        if (callbackNative != null) {
-                            callbackNative.onFailed();
+                        if (callback != null) {
+                            callback.onFailed();
                         }
                     }
 
                     @Override
                     public void onAdImpression() {
                         FBTracking.funcTrackingIAA(activity, FBTracking.EVENT_AD_IMPRESSION);
-                        if (callbackNative != null) {
-                            callbackNative.onAdImpression();
+                        if (callback != null) {
+                            callback.onAdImpression();
                         }
                     }
                 }).build();
@@ -244,8 +244,8 @@ public class NativeLanguageAll {
                 adLoader.loadAd(new AdRequest.Builder().build());
             } else {
                 isLoadingNormal = false;
-                if (callbackNative != null) {
-                    callbackNative.onFailed();
+                if (callback != null) {
+                    callback.onFailed();
                 }
             }
         } catch (Exception e) {
@@ -284,8 +284,8 @@ public class NativeLanguageAll {
                             super.onAdLoaded();
                             isLoadingHigh = false;
                             Log.e("TAG", "onAdLoaded: native language high");
-                            if (callbackNative != null) {
-                                callbackNative.onLoaded();
+                            if (callback != null) {
+                                callback.onLoaded();
                             }
                         }
 
@@ -296,8 +296,8 @@ public class NativeLanguageAll {
                             if (FirebaseQuery.getEnableNativeLanguage()) {
                                 loadAdsNormal(activity);
                             } else {
-                                if (callbackNative != null) {
-                                    callbackNative.onFailed();
+                                if (callback != null) {
+                                    callback.onFailed();
                                 }
                             }
                         }
@@ -305,8 +305,8 @@ public class NativeLanguageAll {
                         @Override
                         public void onAdImpression() {
                             FBTracking.funcTrackingIAA(activity, FBTracking.EVENT_AD_IMPRESSION);
-                            if (callbackNative != null) {
-                                callbackNative.onAdImpression();
+                            if (callback != null) {
+                                callback.onAdImpression();
                             }
                         }
                     }).build();
@@ -320,15 +320,15 @@ public class NativeLanguageAll {
                     if (FirebaseQuery.getEnableNativeLanguage()) {
                         loadAdsNormal(activity);
                     } else {
-                        if (callbackNative != null) {
-                            callbackNative.onFailed();
+                        if (callback != null) {
+                            callback.onFailed();
                         }
                     }
                 }
             } else {
                 isLoadingHigh = false;
-                if (callbackNative != null) {
-                    callbackNative.onFailed();
+                if (callback != null) {
+                    callback.onFailed();
                 }
             }
         } catch (Exception e) {
@@ -343,8 +343,8 @@ public class NativeLanguageAll {
         } else if (FirebaseQuery.getEnableNativeLanguage()) {
             loadAdsNormal(activity);
         } else {
-            if (callbackNative != null) {
-                callbackNative.onFailed();
+            if (callback != null) {
+                callback.onFailed();
             }
         }
     }
@@ -376,13 +376,13 @@ public class NativeLanguageAll {
     public void destroyAd() {
         nativeAdHigh = null;
         nativeAdNormal = null;
-        callbackNative = null;
+        callback = null;
     }
 
     public void destroyAdAll() {
         nativeAdHigh = null;
         nativeAdNormal = null;
         nativeAdAll = null;
-        callbackNative = null;
+        callback = null;
     }
 }

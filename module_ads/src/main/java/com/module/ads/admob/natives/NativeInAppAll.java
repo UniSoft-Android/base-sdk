@@ -66,14 +66,6 @@ public class NativeInAppAll {
                         lnNative.setVisibility(View.VISIBLE);
                         lnNative.removeAllViews();
                         lnNative.addView(nativeAdView);
-
-                        NativeUtils.handleNativeMedia(nativeAd, namePlace, () -> {
-                            if (isNativeInApp) {
-                                loadAndShowAll(activity, lnNative, null, namePlace);
-                            } else {
-                                loadAndShow(activity, lnNative, idAds, callbackNative, namePlace, false);
-                            }
-                        });
                     }
                 });
 
@@ -166,10 +158,6 @@ public class NativeInAppAll {
                 NativeUtils.populateNativeAdView(nativeAd, nativeAdView, namePlace);
                 lnNative.removeAllViews();
                 lnNative.addView(nativeAdView);
-
-                NativeUtils.handleNativeMedia(nativeAd, namePlace, () -> {
-                    loadAndShowAll(activity, lnNative, null, namePlace);
-                });
             } else {
                 lnNative.setVisibility(View.GONE);
             }

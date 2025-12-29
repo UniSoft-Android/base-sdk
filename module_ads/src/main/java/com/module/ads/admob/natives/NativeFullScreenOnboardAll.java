@@ -106,17 +106,12 @@ public class NativeFullScreenOnboardAll {
         }
     }
 
-    public void loadAndShowAll(Activity activity, LinearLayout lnNative, CallbackNative callbackNative, String namePlace) {
+    public void loadAndShowAll(Activity activity, LinearLayout lnNative, String idHigh, String idNormal, CallbackNative callbackNative, String namePlace) {
         if (!PurchaseUtils.isNoAds(activity) && FirebaseQuery.getEnableAds() && FirebaseQuery.getEnableNative()) {
             if (FirebaseQuery.getEnableNativeFullScr2Floor()) {
-                loadAndShow(activity, lnNative, FirebaseQuery.getIdNativeFullOnboard2Floor(), new CallbackNative() {
+                loadAndShow(activity, lnNative, idHigh, new CallbackNative() {
                     @Override
                     public void onLoaded() {
-                        if (nativeAdAll != null) {
-                            NativeUtils.handleNativeMedia(nativeAdAll, namePlace, () -> {
-                                loadAndShowAll(activity, lnNative, null, namePlace);
-                            });
-                        }
                     }
 
                     @Override
@@ -125,11 +120,6 @@ public class NativeFullScreenOnboardAll {
                             loadAndShow(activity, lnNative, FirebaseQuery.getIdNativeFullOnboard(), new CallbackNative() {
                                 @Override
                                 public void onLoaded() {
-                                    if (nativeAdAll != null) {
-                                        NativeUtils.handleNativeMedia(nativeAdAll, namePlace, () -> {
-                                            loadAndShowAll(activity, lnNative, null, namePlace);
-                                        });
-                                    }
                                 }
 
                                 @Override
@@ -153,14 +143,9 @@ public class NativeFullScreenOnboardAll {
                 }, namePlace);
             } else {
                 if (FirebaseQuery.getEnableNativeFullScr()) {
-                    loadAndShow(activity, lnNative, FirebaseQuery.getIdNativeFullOnboard(), new CallbackNative() {
+                    loadAndShow(activity, lnNative, idNormal, new CallbackNative() {
                         @Override
                         public void onLoaded() {
-                            if (nativeAdAll != null) {
-                                NativeUtils.handleNativeMedia(nativeAdAll, namePlace, () -> {
-                                    loadAndShowAll(activity, lnNative, null, namePlace);
-                                });
-                            }
                         }
 
                         @Override
@@ -176,13 +161,13 @@ public class NativeFullScreenOnboardAll {
         }
     }
 
-    private void loadAdsHigh(final Activity activity) {
+    private void loadAdsHigh(final Activity activity, String idHigh, String idNormal) {
         try {
             if (isLoadingHigh || nativeAdHigh != null) return;
             if (!PurchaseUtils.isNoAds(activity) && FirebaseQuery.getEnableAds() && FirebaseQuery.getEnableNative()) {
                 if (FirebaseQuery.getEnableNativeFullScr2Floor()) {
                     isLoadingHigh = true;
-                    AdLoader.Builder builder = new AdLoader.Builder(activity, FirebaseQuery.getIdNativeFullOnboard2Floor()); // Store thay lại id
+                    AdLoader.Builder builder = new AdLoader.Builder(activity, idHigh);
                     builder.forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
                         @Override
                         public void onNativeAdLoaded(@NonNull NativeAd nativeAd) {
@@ -217,7 +202,7 @@ public class NativeFullScreenOnboardAll {
                             nativeAdHigh = null;
                             Log.e("TAG", "onAdFailedToLoad: native full onboard high - " + loadAdError.getMessage());
                             if (FirebaseQuery.getEnableNativeFullScr()) {
-                                loadAdsNormal(activity);
+                                loadAdsNormal(activity, idNormal);
                             } else {
                                 if (callbackNative != null) {
                                     callbackNative.onFailed();
@@ -241,7 +226,7 @@ public class NativeFullScreenOnboardAll {
                 } else {
                     isLoadingHigh = false;
                     if (FirebaseQuery.getEnableNativeFullScr()) {
-                        loadAdsNormal(activity);
+                        loadAdsNormal(activity, idNormal);
                     } else {
                         if (callbackNative != null) {
                             callbackNative.onFailed();
@@ -260,12 +245,12 @@ public class NativeFullScreenOnboardAll {
         }
     }
 
-    private void loadAdsNormal(final Activity activity) {
+    private void loadAdsNormal(final Activity activity, String idNormal) {
         try {
             if (isLoadingNormal || nativeAdNormal != null) return;
             if (!PurchaseUtils.isNoAds(activity) && FirebaseQuery.getEnableAds() && FirebaseQuery.getEnableNative() && FirebaseQuery.getEnableNativeFullScr()) {
                 isLoadingNormal = true;
-                AdLoader.Builder builder = new AdLoader.Builder(activity, FirebaseQuery.getIdNativeFullOnboard()); // Store thay lại id
+                AdLoader.Builder builder = new AdLoader.Builder(activity, idNormal);
                 builder.forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
                     @Override
                     public void onNativeAdLoaded(@NonNull NativeAd nativeAd) {
@@ -328,11 +313,11 @@ public class NativeFullScreenOnboardAll {
         }
     }
 
-    public void loadAdsAll(Activity activity) {
+    public void loadAdsAll(Activity activity, String idHigh, String idNormal) {
         if (FirebaseQuery.getEnableNativeFullScr2Floor()) {
-            loadAdsHigh(activity);
+            loadAdsHigh(activity, idHigh, idNormal);
         } else if (FirebaseQuery.getEnableNativeFullScr()) {
-            loadAdsNormal(activity);
+            loadAdsNormal(activity, idNormal);
         }
     }
 
@@ -350,10 +335,6 @@ public class NativeFullScreenOnboardAll {
                 lnNative.setVisibility(View.VISIBLE);
                 lnNative.removeAllViews();
                 lnNative.addView(nativeAdView);
-
-                NativeUtils.handleNativeMedia(nativeAd, namePlace, () -> {
-                    loadAndShowAll(activity, lnNative, null, namePlace);
-                });
             }
         } catch (Exception e) {
             e.printStackTrace();
