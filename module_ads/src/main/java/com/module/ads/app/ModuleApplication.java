@@ -3,19 +3,19 @@ package com.module.ads.app;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.google.android.gms.ads.AdActivity;
 import com.google.firebase.FirebaseApp;
 import com.module.ads.admob.aoa.ResumeAdsManager;
 import com.module.ads.admob.inters.IntersInApp;
-import com.module.ads.admob.inters.IntersOnboardAll;
-import com.module.ads.admob.inters.IntersSplashAll;
 import com.module.ads.admob.inters.IntersUtils;
-import com.module.ads.admob.natives.NativeFullScreenOnboardAll;
+import com.module.ads.admob.natives.NativeInApp;
 import com.module.ads.admob.reward.RewardInApp;
 import com.module.ads.mmp.AdjustTracking;
 import com.module.ads.utils.SharePreferUtils;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModuleApplication extends Application implements Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
-
     private Activity currentActivity;
     private ResumeAdsManager appOpenAdManager;
 
@@ -45,10 +44,11 @@ public class ModuleApplication extends Application implements Application.Activi
         FirebaseApp.initializeApp(this);
         AdjustTracking.initAdjust(this);
         SharePreferUtils.init(this);
-
+        addExcludedActivity(AdActivity.class);
         registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         appOpenAdManager = new ResumeAdsManager();
+
     }
 
     // ============================================
@@ -56,39 +56,36 @@ public class ModuleApplication extends Application implements Application.Activi
     // ============================================
     @Override
     public void onStart(@NonNull LifecycleOwner owner) {
-        if (currentActivity != null) {
-            // Nếu activity nằm trong danh sách bị loại trừ → không show ads
-            if (isActivityExcluded(currentActivity)) {
-                return;
-            }
-            if (IntersSplashAll.getInstance().isShowing ||
-                    IntersInApp.getInstance().isShowing ||
-                    IntersOnboardAll.getInstance().isShowing ||
-                    RewardInApp.getInstance().isShowing ||
-                    NativeFullScreenOnboardAll.getInstance().isShowing) {
-                return;
-            }
-            appOpenAdManager.showAdIfAvailable(currentActivity);
+        if (currentActivity == null) return;
+        if (isActivityExcluded(currentActivity)) {
+            return;
         }
+        if (IntersInApp.getInstance().isShowing ||
+                RewardInApp.getInstance().isShowing) {
+            return;
+        }
+        appOpenAdManager.showAdIfAvailable(currentActivity);
     }
 
     // ============================================
     // Activity Lifecycle
     // ============================================
     @Override
-    public void onActivityCreated(@NonNull Activity activity, Bundle bundle) {
-    }
+    public void onActivityCreated(@NonNull Activity activity, Bundle bundle) {}
 
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
-        // Nếu quảng cáo không hiển thị → cập nhật currentActivity
         if (!appOpenAdManager.isShowingAd) {
             currentActivity = activity;
+        }
+        if(!isActivityExcluded(currentActivity)) {
+            appOpenAdManager.loadAd(currentActivity);
         }
     }
 
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
+
     }
 
     @Override

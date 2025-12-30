@@ -15,6 +15,7 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.OnPaidEventListener;
 import com.google.android.gms.ads.appopen.AppOpenAd;
 import com.module.ads.callback.CallbackAd;
+import com.module.ads.callback.OnAoaListener;
 import com.module.ads.mmp.AdjustTracking;
 import com.module.ads.remote.FirebaseQuery;
 import com.module.ads.utils.FBTracking;
@@ -32,7 +33,6 @@ public class OpenAdsManager {
     private boolean isShowing = false;
     private boolean isTimeOut = false;
     private static OpenAdsManager openAds;
-    public boolean shouldReloadAd = false;
     public static AppOpenAd appOpenAd;
 
     public static OpenAdsManager getOpenAds() {
@@ -42,7 +42,7 @@ public class OpenAdsManager {
         return openAds;
     }
 
-    public void loadAndShow(final Activity activity, CallbackAd callbackAd) {
+    public void loadAndShow(final Activity activity, String idAds, OnAoaListener callback, CallbackAd callbackAd) {
         mCallBack = callbackAd;
         if (!isAdAvailable()) {
             isTimeOut = false;
@@ -56,19 +56,18 @@ public class OpenAdsManager {
                     appOpenAd.setOnPaidEventListener(new OnPaidEventListener() {
                         @Override
                         public void onPaidEvent(@NonNull AdValue adValue) {
-                            long revenue = adValue.getValueMicros() / 1000000;
-                            AdapterResponseInfo loadedAdapterResponseInfo = appOpenAd.getResponseInfo().getLoadedAdapterResponseInfo();
-                            AdjustTracking.adjustTrackingRev(adValue.getValueMicros() / 1000000.0, adValue.getCurrencyCode(), loadedAdapterResponseInfo.getAdSourceName());
-                            FBTracking.funcTrackingIAA(activity, FBTracking.EVENT_AD_IMPRESSION, String.valueOf(revenue), activity.getClass(), "OpenAds");
+                            if(callback != null) callback.onPaidEvent(adValue);
                         }
                     });
                     appOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                         @Override
                         public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                            if(callback != null) callback.onAdFailedToShowFullScreenContent(adError);
                         }
 
                         @Override
                         public void onAdDismissedFullScreenContent() {
+                            if(callback != null) callback.onAdDismissedFullScreenContent();
                             isShowing = false;
                             try {
                                 if (loadingAdDialog != null) {
@@ -85,10 +84,13 @@ public class OpenAdsManager {
 
                         @Override
                         public void onAdImpression() {
-                            FBTracking.funcTrackingIAA(activity, FBTracking.EVENT_AD_IMPRESSION);
+                            if(callback != null) callback.onAdImpression();
                             isTimeOut = true;
                         }
                     });
+
+                    if(callback != null) callback.onAdLoaded();
+
                     try {
                         if (loadingAdDialog == null) {
                             loadingAdDialog = new LoadingAdDialog(activity);
@@ -108,12 +110,13 @@ public class OpenAdsManager {
 
                 @Override
                 public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    if(callback != null) callback.onAdFailedToLoad(loadAdError);
                     isShowing = true;
                     isTimeOut = true;
                 }
             };
             AdRequest adRequest = new AdRequest.Builder().build();
-            AppOpenAd.load(activity, FirebaseQuery.getIdOpenStart(), adRequest, mAppOpenAdLoadCallback);
+            AppOpenAd.load(activity, idAds, adRequest, mAppOpenAdLoadCallback);
             timeout(callbackAd);
         } else {
             if (mCallBack != null) {
@@ -149,20 +152,14 @@ public class OpenAdsManager {
         return mAppOpenAd != null && wasLoadTimeLessThanNHoursAgo();
     }
 
-    public void showOpenAds(Activity activity, CallbackAd callback) {
+    public void showOpenAds(Activity activity,String idAds, OnAoaListener callback, CallbackAd nextAction) {
         HomeUtils.setHomeClick(false);
-        if (!PurchaseUtils.isNoAds(activity) && FirebaseQuery.getEnableOpenStart() && FirebaseQuery.getEnableAds()) {
-            if (!isShowing) {
-                loadAndShow(activity, callback);
-                isShowing = true;
-            } else {
-                if (callback != null) {
-                    callback.onNextAction();
-                }
-            }
+        if (!isShowing) {
+            loadAndShow(activity, idAds, callback, nextAction);
+            isShowing = true;
         } else {
-            if (callback != null) {
-                callback.onNextAction();
+            if (nextAction != null) {
+                nextAction.onNextAction();
             }
         }
     }

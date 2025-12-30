@@ -3,20 +3,20 @@ package com.module.ads.callback;
 import com.google.android.gms.ads.AdValue;
 import com.google.android.gms.ads.LoadAdError;
 
-public interface OnNativeListener {
-    void onLoaded();
+public abstract class OnNativeListener {
+    public void onLoaded() {}
 
-    void onPaidEventListener(AdValue adValue);
+    public void onPaidEventListener(AdValue adValue) {}
 
-    void onFailed(LoadAdError loadAdError);
+    public void onFailed(LoadAdError loadAdError) {}
 
-    void onAdImpression();
+    public void onAdImpression() {}
 
-    void onAdSwipeGestureClicked();
+    public void onAdSwipeGestureClicked() {}
 
-    void onAdClicked();
+    public void onAdClicked() {}
 
-    void onAdOpened();
+    public void onAdOpened() {}
 
-    void onAdClosed();
+    public void onAdClosed() {}
 }

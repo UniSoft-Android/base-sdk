@@ -44,13 +44,12 @@ public class ResumeAdsManager {
     }
 
     public void loadAd(Context context, AppOpenListener listener) {
-        if (isLoadingAd || isAdAvailable() || PurchaseUtils.isNoAds(context) || !FirebaseQuery.getEnableAds() || !FirebaseQuery.getEnableOpenResume()) {
+        if (isLoadingAd || isAdAvailable()) {
             return;
         }
         isLoadingAd = true;
 
         AdManagerAdRequest request = new AdManagerAdRequest.Builder().build();
-
         AppOpenAd.load(
                 context,
                 BuildConfig.open_resume,
@@ -59,7 +58,6 @@ public class ResumeAdsManager {
 
                     @Override
                     public void onAdLoaded(@NonNull AppOpenAd ad) {
-                        Log.e("TAG", "onAdLoaded: open resume");
                         appOpenAd = ad;
                         isLoadingAd = false;
                         loadTime = new Date().getTime();
@@ -71,7 +69,6 @@ public class ResumeAdsManager {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        Log.e(TAG, "onAdFailedToLoad: open resume: " + loadAdError.getMessage());
                         isLoadingAd = false;
                         if (listener != null) {
                             listener.onAdFailedToLoad();
@@ -112,22 +109,17 @@ public class ResumeAdsManager {
     // Show Ad - main logic
     // ================================
     public void showAdIfAvailable(Activity activity, OnShowAdCompleteListener listener) {
-
         if (activity == null || activity.isFinishing()) return;
 
         if (isShowingAd || isAdFullShowing) {
-            Log.d(TAG, "The app open ad is already showing.");
             return;
         }
 
-        if (!isAdAvailable() || PurchaseUtils.isNoAds(activity) || !FirebaseQuery.getEnableAds() || !FirebaseQuery.getEnableOpenResume()) {
-            Log.d(TAG, "The app open ad is not ready yet.");
+        if (!isAdAvailable()) {
             listener.onShowAdComplete();
             loadAd(activity);
             return;
         }
-
-        Log.d(TAG, "Will show ad.");
 
         appOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
 

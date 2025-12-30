@@ -14,9 +14,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 import com.module.ads.BuildConfig;
 import com.module.ads.admob.aoa.OpenAdsManager;
-import com.module.ads.admob.banner.BannerSplash;
-import com.module.ads.admob.inters.IntersSplashAll;
-import com.module.ads.admob.natives.NativeLanguageAll;
 import com.module.ads.callback.CallbackAd;
 import com.module.ads.callback.CallbackBanner;
 import com.module.ads.callback.CallbackTimeout;
@@ -378,7 +375,7 @@ public class FirebaseQuery {
         setEnableShowNativeFullScr2(enableShowNativeFullScr2);
 
         if (getEnableAds() && getEnableBannerSplash()) {
-            BannerSplash.getInstance().loadAds(activity, callbackBannerSplash);
+//            BannerSplash.getInstance().loadAds(activity, callbackBannerSplash);
         } else {
             if (callbackBannerSplash != null) {
                 callbackBannerSplash.onFailed();
@@ -393,19 +390,19 @@ public class FirebaseQuery {
                         callbackTimeout.cancelTimeout();
                     }
                     if (enableAds) {
-                        if (!isChooseLanguage || !isFromNotification) {
-                            NativeLanguageAll.getInstance().loadAdsAll(activity);
-                        } else {
-                            if (isShowLanguageReopen) {
-                                NativeLanguageAll.getInstance().loadAdsAll(activity);
-                            }
-                        }
+//                        if (!isChooseLanguage || !isFromNotification) {
+//                            NativeLanguageAll.getInstance().loadAdsAll(activity);
+//                        } else {
+//                            if (isShowLanguageReopen) {
+//                                NativeLanguageAll.getInstance().loadAdsAll(activity);
+//                            }
+//                        }
 
-                        if (isShowOpenStart) {
-                            OpenAdsManager.getOpenAds().showOpenAds(activity, callbackAd);
-                        } else {
-                            IntersSplashAll.getInstance().loadAnsShow(activity, callbackAd);
-                        }
+//                        if (isShowOpenStart) {
+//                            OpenAdsManager.getOpenAds().showOpenAds(activity, callbackAd);
+//                        } else {
+//                            IntersSplashAll.getInstance().loadAnsShow(activity, callbackAd);
+//                        }
                     } else {
                         if (callbackAd != null) {
                             callbackAd.onNextAction();
