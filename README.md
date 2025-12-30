@@ -21,11 +21,14 @@ Trong setting.gradle
 
 ### 3. Khởi tạo ModuleApplication (chỉ gọi 1 lần)
 
-Gọi ngay khi app khởi động, tốt nhất trong `Application` class
+Gọi ngay khi app khởi động, tốt nhất trong `Application` class, extend lại ModuleApplication()
 
     class MyApplication: ModuleApplication() {
         override fun onCreate() {
             super.onCreate()
+
+            addExcludedActivity(OnboardActivity::class.java)  // Thêm activity mà bạn không muốn show resume ads vào đây
+            addExcludedActivity(SplashActivity::class.java)
         }
     }
 
@@ -119,6 +122,7 @@ Gọi ngay khi app khởi động, tốt nhất trong `Application` class
 
 
 ### 7. Reward Ads
+Logic load trước show sau (có highfloor)
 
     RewardInApp.getInstance().loadReward(       
         this,                                        // Activity
@@ -132,7 +136,17 @@ Gọi ngay khi app khởi động, tốt nhất trong `Application` class
         nextAction()
     }
 
+### 8. Adjust
+Khởi tạo adjust ở MyApplication và truyền id vào đó
 
+    class MyApplication: ModuleApplication() {
+        override fun onCreate() {
+            super.onCreate()
+            AdjustTracking.initAdjust(this, "adjust_id")
+            addExcludedActivity(OnboardActivity::class.java)  // Thêm activity mà bạn không muốn show resume ads vào đây
+            addExcludedActivity(SplashActivity::class.java)
+        }
+    }
 
 
 

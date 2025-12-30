@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">BaseTemplate</string>
-
+    <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="facebook_app_id">123456789</string>
+    <string name="facebook_client_token">123456789</string>
+    <string name="adjust_token_id">123456789</string>
 </resources>

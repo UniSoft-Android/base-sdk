@@ -42,7 +42,6 @@ public class ModuleApplication extends Application implements Application.Activi
     public void onCreate() {
         super.onCreate();
         FirebaseApp.initializeApp(this);
-        AdjustTracking.initAdjust(this);
         SharePreferUtils.init(this);
         addExcludedActivity(AdActivity.class);
         registerActivityLifecycleCallbacks(this);

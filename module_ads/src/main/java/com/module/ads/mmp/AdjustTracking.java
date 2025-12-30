@@ -29,8 +29,7 @@ public class AdjustTracking {
         Adjust.trackAdRevenue(event);
     }
 
-    public static void initAdjust(Application application) {
-        String keyAppToken = application.getResources().getString(R.string.adjust_token_id); // Thay lại sau
+    public static void initAdjust(Application application, String keyAppToken) {
         String environment;
         if (BuildConfig.DEBUG) {
             environment = AdjustConfig.ENVIRONMENT_SANDBOX; // Debug mới sử dụng dòng này

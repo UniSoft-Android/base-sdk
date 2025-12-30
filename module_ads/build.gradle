@@ -106,7 +106,7 @@ afterEvaluate {
             release(MavenPublication) {
                 groupId = "com.github.UniSoft-Android"
                 artifactId = "base-sdk"
-                version = "1.2"
+                version = "1.5"
 
                 from components.release
             }
