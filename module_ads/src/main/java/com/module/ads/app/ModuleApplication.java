@@ -1,9 +1,7 @@
 package com.module.ads.app;
 
 import android.app.Activity;
-import android.app.Application;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
@@ -15,15 +13,13 @@ import com.google.firebase.FirebaseApp;
 import com.module.ads.admob.aoa.ResumeAdsManager;
 import com.module.ads.admob.inters.IntersInApp;
 import com.module.ads.admob.inters.IntersUtils;
-import com.module.ads.admob.natives.NativeInApp;
 import com.module.ads.admob.reward.RewardInApp;
-import com.module.ads.mmp.AdjustTracking;
 import com.module.ads.utils.SharePreferUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModuleApplication extends Application implements Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
+public class ModuleApplication extends android.app.Application implements android.app.Application.ActivityLifecycleCallbacks, DefaultLifecycleObserver {
     private Activity currentActivity;
     private ResumeAdsManager appOpenAdManager;
 
@@ -70,14 +66,15 @@ public class ModuleApplication extends Application implements Application.Activi
     // Activity Lifecycle
     // ============================================
     @Override
-    public void onActivityCreated(@NonNull Activity activity, Bundle bundle) {}
+    public void onActivityCreated(@NonNull Activity activity, Bundle bundle) {
+    }
 
     @Override
     public void onActivityStarted(@NonNull Activity activity) {
         if (!appOpenAdManager.isShowingAd) {
             currentActivity = activity;
         }
-        if(!isActivityExcluded(currentActivity)) {
+        if (!isActivityExcluded(currentActivity)) {
             appOpenAdManager.loadAd(currentActivity);
         }
     }

@@ -28,6 +28,18 @@
     public <init>(...);
 }
 
+# Keep application
+# keep everything in this package from being removed or renamed
+-keep class com.module.ads.app.ModuleApplication { *; }
+
+# keep everything in this package from being renamed only
+-keepnames class com.module.ads.app.ModuleApplication
+
+# keep interface nested Application.ActivityLifecycleCallbacks
+-keep class android.app.Application$ActivityLifecycleCallbacks { *; }
+-keep interface android.app.Application$ActivityLifecycleCallbacks { *; }
+
+
 # Keep model
 # keep everything in this package from being removed or renamed
 -keep class com.module.ads.models.** { *; }
